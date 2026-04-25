@@ -3,199 +3,83 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UNAGENDIF — Generador de Contenido Instagram</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>UNAGENDIF — Generador Instagram</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --gold: #C9973A;
-    --gold-l: #E8C97A;
-    --navy: #0F1E3C;
-    --navy2: #1A2F56;
-    --cream: #F9F4EC;
-    --warm: #F0E8D8;
-    --muted: #7A7A7A;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'DM Sans',sans-serif; background:var(--navy); color:var(--cream); min-height:100vh; }
-
-  header {
-    background:linear-gradient(135deg,var(--navy),var(--navy2));
-    border-bottom:1px solid rgba(201,151,58,.22);
-    padding:18px 28px; display:flex; align-items:center; gap:14px;
-    position:sticky; top:0; z-index:99; backdrop-filter:blur(10px);
-  }
-  .logo {
-    width:42px; height:42px; background:var(--gold); border-radius:10px;
-    display:flex; align-items:center; justify-content:center;
-    font-family:'Playfair Display',serif; font-weight:700; color:var(--navy); font-size:17px; flex-shrink:0;
-  }
-  header h1 { font-family:'Playfair Display',serif; font-size:1.05rem; }
-  header p { font-size:.72rem; color:var(--gold-l); font-weight:300; }
-  .ig-badge {
-    margin-left:auto;
-    background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);
-    padding:5px 13px; border-radius:20px; font-size:.7rem; font-weight:500;
-  }
-
-  .app { display:grid; grid-template-columns:310px 1fr; min-height:calc(100vh - 73px); }
-
-  /* SIDEBAR */
-  .sidebar {
-    background:rgba(255,255,255,.03);
-    border-right:1px solid rgba(201,151,58,.12);
-    padding:22px 16px; display:flex; flex-direction:column; gap:5px; overflow-y:auto;
-  }
-  .slabel {
-    font-size:.62rem; font-weight:500; letter-spacing:.12em; color:var(--gold);
-    text-transform:uppercase; margin:14px 0 7px 4px;
-  }
-  .type-card {
-    background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
-    border-radius:12px; padding:12px 14px; cursor:pointer; transition:all .2s;
-    display:flex; align-items:center; gap:11px;
-  }
-  .type-card:hover { background:rgba(201,151,58,.09); border-color:rgba(201,151,58,.28); }
-  .type-card.active { background:rgba(201,151,58,.14); border-color:var(--gold); }
-  .ticon {
-    width:34px; height:34px; border-radius:8px; background:rgba(201,151,58,.14);
-    display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0;
-  }
-  .type-card.active .ticon { background:rgba(201,151,58,.28); }
-  .tinfo h3 { font-size:.82rem; font-weight:500; margin-bottom:2px; }
-  .tinfo p { font-size:.68rem; color:var(--muted); line-height:1.4; }
-
-  .pills { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
-  .pill {
-    padding:5px 12px; border-radius:20px; font-size:.71rem;
-    border:1px solid rgba(255,255,255,.14); cursor:pointer; transition:all .2s;
-    background:transparent; color:var(--cream); font-family:'DM Sans',sans-serif;
-  }
-  .pill:hover { border-color:var(--gold); color:var(--gold); }
-  .pill.active { background:var(--gold); border-color:var(--gold); color:var(--navy); font-weight:500; }
-
-  .gen-btn {
-    width:100%; padding:13px; margin-top:18px;
-    background:linear-gradient(135deg,var(--gold),#E8B84B);
-    color:var(--navy); border:none; border-radius:12px;
-    font-family:'DM Sans',sans-serif; font-size:.88rem; font-weight:500;
-    cursor:pointer; transition:all .25s; display:flex; align-items:center; justify-content:center; gap:8px;
-  }
-  .gen-btn:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(201,151,58,.32); }
-  .gen-btn:disabled { opacity:.55; cursor:not-allowed; transform:none; box-shadow:none; }
-
-  /* MAIN */
-  .main { padding:28px; overflow-y:auto; }
-  .out-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; }
-  .out-header h2 { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:600; }
-  .cnt-badge {
-    font-size:.72rem; color:var(--gold-l);
-    background:rgba(201,151,58,.1); padding:4px 12px;
-    border-radius:20px; border:1px solid rgba(201,151,58,.2);
-  }
-
-  .posts-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(420px,1fr)); gap:18px; }
-
-  .post-card {
-    background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
-    border-radius:16px; overflow:hidden; transition:all .2s;
-    animation:fadeUp .4s ease both;
-  }
-  .post-card:hover { border-color:rgba(201,151,58,.28); transform:translateY(-2px); }
-  @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
-
-  .p-head {
-    padding:13px 17px 10px; display:flex; align-items:center; gap:9px;
-    border-bottom:1px solid rgba(255,255,255,.06);
-  }
-  .p-avatar {
-    width:30px; height:30px; background:var(--gold); border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    font-family:'Playfair Display',serif; font-weight:700; color:var(--navy); font-size:12px; flex-shrink:0;
-  }
-  .p-handle { font-size:.76rem; font-weight:500; }
-  .p-tag {
-    margin-left:auto; font-size:.63rem; padding:3px 9px; border-radius:10px; font-weight:500;
-  }
-  .tag-reflexion { background:rgba(184,69,69,.18); color:#E87777; border:1px solid rgba(184,69,69,.3); }
-  .tag-programa  { background:rgba(201,151,58,.18); color:var(--gold-l); border:1px solid rgba(201,151,58,.3); }
-  .tag-historia  { background:rgba(72,130,180,.18); color:#8EC5E6; border:1px solid rgba(72,130,180,.3); }
-  .tag-dato      { background:rgba(100,180,120,.18); color:#8EE6A8; border:1px solid rgba(100,180,120,.3); }
-  .tag-comunidad { background:rgba(160,100,200,.18); color:#D0A0FF; border:1px solid rgba(160,100,200,.3); }
-
-  .p-body { padding:15px 17px; }
-  .p-caption { font-size:.85rem; line-height:1.75; color:#D8D4CC; white-space:pre-line; word-break:break-word; }
-  .p-hashtags { margin-top:11px; font-size:.76rem; color:var(--gold-l); line-height:1.8; opacity:.85; }
-
-  .p-foot { padding:10px 17px 14px; display:flex; gap:7px; flex-wrap:wrap; }
-  .copy-btn {
-    padding:7px 13px; border-radius:8px; font-size:.73rem;
-    font-family:'DM Sans',sans-serif; cursor:pointer; transition:all .2s;
-    display:flex; align-items:center; gap:5px; font-weight:500;
-    background:rgba(201,151,58,.14); border:1px solid rgba(201,151,58,.28); color:var(--gold-l);
-  }
-  .copy-btn:hover { background:rgba(201,151,58,.24); }
-  .copy-btn.ok { background:rgba(100,180,120,.18); border-color:rgba(100,180,120,.35); color:#8EE6A8; }
-
-  /* ESTADOS */
-  .empty-state, .spinner-wrap {
-    display:flex; flex-direction:column; align-items:center;
-    justify-content:center; height:60vh; text-align:center; gap:14px;
-  }
-  .empty-icon { width:68px;height:68px;border-radius:50%;background:rgba(201,151,58,.1);display:flex;align-items:center;justify-content:center;font-size:30px; }
-  .empty-state h3 { font-family:'Playfair Display',serif; font-size:1.2rem; }
-  .empty-state p { color:var(--muted); font-size:.83rem; max-width:290px; line-height:1.6; }
-  .spinner { width:38px;height:38px;border:3px solid rgba(201,151,58,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite; }
-  @keyframes spin { to{transform:rotate(360deg)} }
-  .spinner-wrap p { color:var(--muted); font-size:.83rem; }
-
-  .divider { height:1px; background:rgba(255,255,255,.06); margin:6px 0; }
-
-  ::-webkit-scrollbar { width:4px; }
-  ::-webkit-scrollbar-thumb { background:rgba(201,151,58,.25); border-radius:10px; }
-
-  @media(max-width:700px){
-    .app { grid-template-columns:1fr; }
-    .sidebar { border-right:none; border-bottom:1px solid rgba(201,151,58,.12); }
-    .posts-grid { grid-template-columns:1fr; }
-  }
+  :root{--gold:#C9973A;--gold-l:#E8C97A;--navy:#0F1E3C;--navy2:#1A2F56;--cream:#F9F4EC;--muted:#7A7A7A;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--cream);min-height:100vh;}
+  header{background:linear-gradient(135deg,var(--navy),var(--navy2));border-bottom:1px solid rgba(201,151,58,.22);padding:18px 28px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:99;}
+  .logo{width:42px;height:42px;background:var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;color:var(--navy);font-size:17px;flex-shrink:0;}
+  header h1{font-family:'Playfair Display',serif;font-size:1.05rem;}
+  header p{font-size:.72rem;color:var(--gold-l);font-weight:300;}
+  .ig{margin-left:auto;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);padding:5px 13px;border-radius:20px;font-size:.7rem;font-weight:500;}
+  .app{display:grid;grid-template-columns:310px 1fr;min-height:calc(100vh - 73px);}
+  .sidebar{background:rgba(255,255,255,.03);border-right:1px solid rgba(201,151,58,.12);padding:22px 16px;display:flex;flex-direction:column;gap:5px;overflow-y:auto;}
+  .slabel{font-size:.62rem;font-weight:500;letter-spacing:.12em;color:var(--gold);text-transform:uppercase;margin:14px 0 7px 4px;}
+  .type-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:11px;}
+  .type-card:hover{background:rgba(201,151,58,.09);border-color:rgba(201,151,58,.28);}
+  .type-card.active{background:rgba(201,151,58,.14);border-color:var(--gold);}
+  .ticon{width:34px;height:34px;border-radius:8px;background:rgba(201,151,58,.14);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+  .type-card.active .ticon{background:rgba(201,151,58,.28);}
+  .tinfo h3{font-size:.82rem;font-weight:500;margin-bottom:2px;}
+  .tinfo p{font-size:.68rem;color:var(--muted);line-height:1.4;}
+  .pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+  .pill{padding:5px 12px;border-radius:20px;font-size:.71rem;border:1px solid rgba(255,255,255,.14);cursor:pointer;transition:all .2s;background:transparent;color:var(--cream);font-family:'DM Sans',sans-serif;}
+  .pill:hover{border-color:var(--gold);color:var(--gold);}
+  .pill.active{background:var(--gold);border-color:var(--gold);color:var(--navy);font-weight:500;}
+  .gen-btn{width:100%;padding:13px;margin-top:18px;background:linear-gradient(135deg,var(--gold),#E8B84B);color:var(--navy);border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .gen-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,151,58,.32);}
+  .gen-btn:disabled{opacity:.55;cursor:not-allowed;transform:none;}
+  .main{padding:28px;overflow-y:auto;}
+  .out-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+  .out-header h2{font-family:'Playfair Display',serif;font-size:1.3rem;}
+  .cnt-badge{font-size:.72rem;color:var(--gold-l);background:rgba(201,151,58,.1);padding:4px 12px;border-radius:20px;border:1px solid rgba(201,151,58,.2);}
+  .posts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:18px;}
+  .post-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden;transition:all .2s;animation:fadeUp .4s ease both;}
+  .post-card:hover{border-color:rgba(201,151,58,.28);transform:translateY(-2px);}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  .p-head{padding:13px 17px 10px;display:flex;align-items:center;gap:9px;border-bottom:1px solid rgba(255,255,255,.06);}
+  .p-avatar{width:30px;height:30px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;color:var(--navy);font-size:12px;flex-shrink:0;}
+  .p-handle{font-size:.76rem;font-weight:500;}
+  .p-tag{margin-left:auto;font-size:.63rem;padding:3px 9px;border-radius:10px;font-weight:500;}
+  .tag-reflexion{background:rgba(184,69,69,.18);color:#E87777;border:1px solid rgba(184,69,69,.3);}
+  .tag-programa{background:rgba(201,151,58,.18);color:var(--gold-l);border:1px solid rgba(201,151,58,.3);}
+  .tag-historia{background:rgba(72,130,180,.18);color:#8EC5E6;border:1px solid rgba(72,130,180,.3);}
+  .tag-dato{background:rgba(100,180,120,.18);color:#8EE6A8;border:1px solid rgba(100,180,120,.3);}
+  .tag-comunidad{background:rgba(160,100,200,.18);color:#D0A0FF;border:1px solid rgba(160,100,200,.3);}
+  .p-body{padding:15px 17px;}
+  .p-caption{font-size:.85rem;line-height:1.75;color:#D8D4CC;white-space:pre-line;word-break:break-word;}
+  .p-hashtags{margin-top:11px;font-size:.76rem;color:var(--gold-l);line-height:1.8;opacity:.85;}
+  .p-foot{padding:10px 17px 14px;display:flex;gap:7px;flex-wrap:wrap;}
+  .copy-btn{padding:7px 13px;border-radius:8px;font-size:.73rem;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;font-weight:500;background:rgba(201,151,58,.14);border:1px solid rgba(201,151,58,.28);color:var(--gold-l);}
+  .copy-btn:hover{background:rgba(201,151,58,.24);}
+  .copy-btn.ok{background:rgba(100,180,120,.18);border-color:rgba(100,180,120,.35);color:#8EE6A8;}
+  .empty-state,.spinner-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;text-align:center;gap:14px;}
+  .empty-icon{width:68px;height:68px;border-radius:50%;background:rgba(201,151,58,.1);display:flex;align-items:center;justify-content:center;font-size:30px;}
+  .empty-state h3{font-family:'Playfair Display',serif;font-size:1.2rem;}
+  .empty-state p{color:var(--muted);font-size:.83rem;max-width:290px;line-height:1.6;}
+  .spinner{width:38px;height:38px;border:3px solid rgba(201,151,58,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .spinner-wrap p{color:var(--muted);font-size:.83rem;}
+  .divider{height:1px;background:rgba(255,255,255,.06);margin:6px 0;}
+  @media(max-width:700px){.app{grid-template-columns:1fr;}.sidebar{border-right:none;border-bottom:1px solid rgba(201,151,58,.12);}.posts-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
-
 <header>
   <div class="logo">U</div>
-  <div>
-    <h1>UNAGENDIF · Generador de Contenido</h1>
-    <p>Sembrando Valores, Forjando el Futuro</p>
-  </div>
-  <div class="ig-badge">📸 Instagram</div>
+  <div><h1>UNAGENDIF · Generador de Contenido</h1><p>Sembrando Valores, Forjando el Futuro</p></div>
+  <div class="ig">📸 Instagram</div>
 </header>
-
 <div class="app">
   <aside class="sidebar">
     <div class="slabel">Tipo de publicación</div>
-
-    <div class="type-card active" data-type="reflexion" onclick="selType(this)">
-      <div class="ticon">✨</div>
-      <div class="tinfo"><h3>Reflexión de Fe</h3><p>Versículo bíblico + mensaje inspiracional</p></div>
-    </div>
-    <div class="type-card" data-type="programa" onclick="selType(this)">
-      <div class="ticon">📚</div>
-      <div class="tinfo"><h3>Nuestros Programas</h3><p>Escuela de Líderes, Raíces y Alas, Semillas de Nación</p></div>
-    </div>
-    <div class="type-card" data-type="historia" onclick="selType(this)">
-      <div class="ticon">💛</div>
-      <div class="tinfo"><h3>Historia de Impacto</h3><p>Testimonios de jóvenes y familias transformadas</p></div>
-    </div>
-    <div class="type-card" data-type="dato" onclick="selType(this)">
-      <div class="ticon">📊</div>
-      <div class="tinfo"><h3>Dato de Impacto</h3><p>Estadísticas y logros de la fundación</p></div>
-    </div>
-    <div class="type-card" data-type="comunidad" onclick="selType(this)">
-      <div class="ticon">🤝</div>
-      <div class="tinfo"><h3>Llamado a la Comunidad</h3><p>Voluntariado, donaciones, alianzas</p></div>
-    </div>
-
+    <div class="type-card active" data-type="reflexion" onclick="selType(this)"><div class="ticon">✨</div><div class="tinfo"><h3>Reflexión de Fe</h3><p>Versículo bíblico + mensaje inspiracional</p></div></div>
+    <div class="type-card" data-type="programa" onclick="selType(this)"><div class="ticon">📚</div><div class="tinfo"><h3>Nuestros Programas</h3><p>Escuela de Líderes, Raíces y Alas, Semillas de Nación</p></div></div>
+    <div class="type-card" data-type="historia" onclick="selType(this)"><div class="ticon">💛</div><div class="tinfo"><h3>Historia de Impacto</h3><p>Testimonios de jóvenes y familias</p></div></div>
+    <div class="type-card" data-type="dato" onclick="selType(this)"><div class="ticon">📊</div><div class="tinfo"><h3>Dato de Impacto</h3><p>Estadísticas y logros de la fundación</p></div></div>
+    <div class="type-card" data-type="comunidad" onclick="selType(this)"><div class="ticon">🤝</div><div class="tinfo"><h3>Llamado a la Comunidad</h3><p>Voluntariado, donaciones, alianzas</p></div></div>
     <div class="divider" style="margin:10px 0"></div>
     <div class="slabel">Tono</div>
     <div class="pills" id="tones">
@@ -206,18 +90,15 @@
       <button class="pill" onclick="selTone(this)">Urgente</button>
       <button class="pill" onclick="selTone(this)">Celebratorio</button>
     </div>
-
     <div class="divider" style="margin:10px 0"></div>
     <div class="slabel">Cantidad</div>
     <div class="pills" id="counts">
-      <button class="pill active" onclick="selCount(this)">2 posts</button>
-      <button class="pill" onclick="selCount(this)">3 posts</button>
-      <button class="pill" onclick="selCount(this)">4 posts</button>
+      <button class="pill active" onclick="selCount(this)">2</button>
+      <button class="pill" onclick="selCount(this)">3</button>
+      <button class="pill" onclick="selCount(this)">4</button>
     </div>
-
     <button class="gen-btn" id="genBtn" onclick="generate()">✦ Generar Contenido</button>
   </aside>
-
   <main class="main">
     <div class="out-header">
       <h2>Publicaciones para Instagram</h2>
@@ -234,133 +115,90 @@
 </div>
 
 <script>
-const API_KEY = "AIzaSyDPJalX_fkK0N_InqRo7oFykTvbPfqtLws";
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+const KEY="AIzaSyDPJalX_fkK0N_InqRo7oFykTvbPfqtLws";
+let type="reflexion",tone="Inspirador",count=2;
+const TL={reflexion:"Reflexión de Fe",programa:"Programa",historia:"Historia de Impacto",dato:"Dato de Impacto",comunidad:"Llamado a la Comunidad"};
+const TC={reflexion:"tag-reflexion",programa:"tag-programa",historia:"tag-historia",dato:"tag-dato",comunidad:"tag-comunidad"};
 
-let type = "reflexion", tone = "Inspirador", count = 2;
+function selType(el){document.querySelectorAll(".type-card").forEach(c=>c.classList.remove("active"));el.classList.add("active");type=el.dataset.type;}
+function selTone(el){document.querySelectorAll("#tones .pill").forEach(p=>p.classList.remove("active"));el.classList.add("active");tone=el.textContent;}
+function selCount(el){document.querySelectorAll("#counts .pill").forEach(p=>p.classList.remove("active"));el.classList.add("active");count=parseInt(el.textContent);}
 
-const TYPE_LABELS = { reflexion:"Reflexión de Fe", programa:"Programa", historia:"Historia de Impacto", dato:"Dato de Impacto", comunidad:"Llamado a la Comunidad" };
-const TAG_CLASS   = { reflexion:"tag-reflexion", programa:"tag-programa", historia:"tag-historia", dato:"tag-dato", comunidad:"tag-comunidad" };
-
-function selType(el) {
-  document.querySelectorAll(".type-card").forEach(c => c.classList.remove("active"));
-  el.classList.add("active");
-  type = el.dataset.type;
-}
-function selTone(el) {
-  document.querySelectorAll("#tones .pill").forEach(p => p.classList.remove("active"));
-  el.classList.add("active");
-  tone = el.textContent;
-}
-function selCount(el) {
-  document.querySelectorAll("#counts .pill").forEach(p => p.classList.remove("active"));
-  el.classList.add("active");
-  count = parseInt(el.textContent);
-}
-
-function buildPrompt() {
-  const typePrompts = {
-    reflexion: `Crea ${count} posts de reflexión de fe. Cada uno incluye un versículo bíblico real que fluye naturalmente en el texto. Conéctalos con la realidad venezolana y con el trabajo de UNAGENDIF.`,
-    programa:  `Crea ${count} posts sobre los programas de UNAGENDIF, distribuyendo entre: "Escuela de Líderes del Mañana" (liderazgo, 8-16 años), "Raíces y Alas" (fortalecimiento familiar), "Semillas de Nación" (civismo, 12-18 años). Describe qué viven los participantes y qué cambia en sus vidas.`,
-    historia:  `Crea ${count} posts estilo testimonio de impacto. Pueden ser de un joven egresado, una madre voluntaria o un pastor aliado. Usa nombres venezolanos ficticios creíbles. Escríbelos con emoción genuina como si los narraras tú.`,
-    dato:      `Crea ${count} posts con datos reales de UNAGENDIF: 23 estados, 340+ voluntarios, 80+ congregaciones aliadas, 94% de recursos a programas directos, 87% de egresados mejoran rendimiento escolar, 12 años de servicio. Preséntalo de forma humana, no como informe.`,
-    comunidad: `Crea ${count} posts para invitar a la comunidad a involucrarse: ser voluntario, donar, compartir el mensaje, o aliarse como congregación. Que sean apasionados y con un llamado claro a la acción.`
+function buildPrompt(){
+  const tp={
+    reflexion:`Crea ${count} posts de reflexión de fe para Instagram. Incluye versículos bíblicos reales que fluyan naturalmente en el texto.`,
+    programa:`Crea ${count} posts sobre los programas: Escuela de Líderes del Mañana (8-16 años), Raíces y Alas (familias), Semillas de Nación (civismo 12-18 años).`,
+    historia:`Crea ${count} posts tipo testimonio de impacto con nombres venezolanos ficticios creíbles. Escríbelos con emoción genuina.`,
+    dato:`Crea ${count} posts con datos: 23 estados, 340+ voluntarios, 80+ congregaciones aliadas, 94% recursos a programas, 87% egresados mejoran rendimiento, 12 años de servicio.`,
+    comunidad:`Crea ${count} posts invitando a ser voluntario, donar o aliarse como congregación.`
   };
+  const tn={Inspirador:"inspirador que mueva a la acción",Esperanzador:"esperanzador y lleno de luz",Emotivo:"emotivo y cercano al corazón",Informativo:"informativo pero cálido",Urgente:"urgente y apasionado",Celebratorio:"celebratorio y lleno de gratitud a Dios"};
+  return `Eres el community manager de UNAGENDIF (Una Generación Diferente), fundación cristiana venezolana apoyada por la Hermandad Cristiana de Venezuela. Sede en Caracas, presencia en los 23 estados. Instagram: @unagendif
 
-  const toneMap = {
-    Inspirador:"inspirador y que mueva a la acción", Esperanzador:"esperanzador y lleno de luz",
-    Emotivo:"emotivo y cercano al corazón", Informativo:"informativo pero cálido",
-    Urgente:"urgente y apasionado", Celebratorio:"celebratorio y lleno de gratitud a Dios"
-  };
+REGLAS:
+- Voz humana, venezolana, llena de fe. Sin frases corporativas.
+- Expresiones venezolanas naturales ocasionales: chamo/a, pana, dale pues.
+- Versículos bíblicos en cursiva con cita.
+- 150-280 palabras por caption (sin hashtags).
+- Máximo 12 hashtags por post.
+- Tono: ${tn[tone]||tone}
+- NUNCA: "En el corazón de nuestra misión", "Estamos comprometidos", "Como organización"
 
-  return `Eres el community manager de UNAGENDIF (Una Generación Diferente), fundación cristiana venezolana apoyada por la Hermandad Cristiana de Venezuela. Escribes con voz propia, humana, venezolana y llena de fe.
+TAREA: ${tp[type]}
 
-CONTEXTO UNAGENDIF:
-- Sede en La Castellana, Caracas. Presencia en los 23 estados de Venezuela.
-- Misión: sembrar valores en niños, adolescentes y familias a través de la fe cristiana.
-- Instagram: @unagendif | Web: unagendif.site | RIF: J-29791548-6
-
-REGLAS CRÍTICAS:
-1. Escribe como persona real, con sentimiento genuino. NADA de frases corporativas.
-2. Usa expresiones venezolanas naturales ocasionalmente: "chamo/a", "pana", "¡Dale pues!", "mira".
-3. Versículos bíblicos en cursiva con cita exacta, fluyendo dentro del texto.
-4. Hashtags separados del cuerpo. Máximo 12 por post.
-5. Emojis con criterio: 1-3 por párrafo, nunca abrumadores.
-6. NUNCA uses: "En el corazón de nuestra misión…", "Estamos comprometidos a…", "Como organización…".
-7. Cada post: 150-280 palabras en el cuerpo (sin contar hashtags).
-8. Tono: ${toneMap[tone] || tone}.
-
-TAREA: ${typePrompts[type]}
-
-Responde ÚNICAMENTE con JSON válido, sin markdown, sin texto fuera del JSON:
-{
-  "posts": [
-    {
-      "caption": "texto del post con saltos de línea como \\n",
-      "hashtags": "#hashtag1 #hashtag2 #hashtag3"
-    }
-  ]
-}`;
+Devuelve ÚNICAMENTE JSON válido sin markdown:
+{"posts":[{"caption":"texto\\ncon saltos","hashtags":"#tag1 #tag2"}]}`;
 }
 
-async function generate() {
-  const btn = document.getElementById("genBtn");
-  btn.disabled = true;
-  btn.textContent = "Generando…";
-  document.getElementById("output").innerHTML = `<div class="spinner-wrap"><div class="spinner"></div><p>Creando contenido auténtico para UNAGENDIF…</p></div>`;
-
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: buildPrompt() }] }],
-        generationConfig: { temperature: 0.85, maxOutputTokens: 2048 }
+async function generate(){
+  const btn=document.getElementById("genBtn");
+  btn.disabled=true;btn.textContent="Generando…";
+  document.getElementById("output").innerHTML=`<div class="spinner-wrap"><div class="spinner"></div><p>Creando contenido para UNAGENDIF…</p></div>`;
+  try{
+    const url=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${KEY}`;
+    const res=await fetch(url,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        contents:[{parts:[{text:buildPrompt()}]}],
+        generationConfig:{temperature:0.9,maxOutputTokens:3000}
       })
     });
-
-    const data = await res.json();
-    const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    const clean = raw.replace(/```json|```/g, "").trim();
-    const parsed = JSON.parse(clean);
+    if(!res.ok){const e=await res.json();throw new Error(e.error?.message||`Error ${res.status}`);}
+    const data=await res.json();
+    let raw=data.candidates?.[0]?.content?.parts?.[0]?.text||"";
+    raw=raw.replace(/```json|```/g,"").trim();
+    const parsed=JSON.parse(raw);
     renderPosts(parsed.posts);
-  } catch (e) {
-    document.getElementById("output").innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Ocurrió un error</h3><p>${e.message}</p></div>`;
+  }catch(e){
+    document.getElementById("output").innerHTML=`<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Error</h3><p>${e.message}</p></div>`;
   }
-
-  btn.disabled = false;
-  btn.innerHTML = "✦ Generar Contenido";
+  btn.disabled=false;btn.innerHTML="✦ Generar Contenido";
 }
 
-function renderPosts(posts) {
-  document.getElementById("badge").textContent = `${posts.length} posts`;
-  document.getElementById("output").innerHTML = `<div class="posts-grid">${posts.map((p, i) => `
-    <div class="post-card" style="animation-delay:${i * 0.08}s">
-      <div class="p-head">
-        <div class="p-avatar">U</div>
-        <span class="p-handle">@unagendif</span>
-        <span class="p-tag ${TAG_CLASS[type]}">${TYPE_LABELS[type]}</span>
-      </div>
-      <div class="p-body">
-        <div class="p-caption">${esc(p.caption)}</div>
-        <div class="p-hashtags">${esc(p.hashtags)}</div>
-      </div>
+function renderPosts(posts){
+  document.getElementById("badge").textContent=`${posts.length} posts`;
+  document.getElementById("output").innerHTML=`<div class="posts-grid">${posts.map((p,i)=>{
+    const cap=p.caption.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>");
+    const hash=p.hashtags.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    const fullText=encodeURIComponent(p.caption+"\n\n"+p.hashtags);
+    const capText=encodeURIComponent(p.caption);
+    const hashText=encodeURIComponent(p.hashtags);
+    return `<div class="post-card" style="animation-delay:${i*.08}s">
+      <div class="p-head"><div class="p-avatar">U</div><span class="p-handle">@unagendif</span><span class="p-tag ${TC[type]}">${TL[type]}</span></div>
+      <div class="p-body"><div class="p-caption">${cap}</div><div class="p-hashtags">${hash}</div></div>
       <div class="p-foot">
-        <button class="copy-btn" onclick="copy(this,'${enc(p.caption + '\n\n' + p.hashtags)}')">📋 Copiar todo</button>
-        <button class="copy-btn" onclick="copy(this,'${enc(p.caption)}')">📝 Solo caption</button>
-        <button class="copy-btn" onclick="copy(this,'${enc(p.hashtags)}')">🔖 Solo hashtags</button>
-      </div>
-    </div>`).join("")}</div>`;
+        <button class="copy-btn" onclick="cp(this,'${fullText}')">📋 Copiar todo</button>
+        <button class="copy-btn" onclick="cp(this,'${capText}')">📝 Caption</button>
+        <button class="copy-btn" onclick="cp(this,'${hashText}')">🔖 Hashtags</button>
+      </div></div>`;
+  }).join("")}</div>`;
 }
 
-function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>"); }
-function enc(s){ return encodeURIComponent(s); }
-function copy(btn, encoded) {
-  navigator.clipboard.writeText(decodeURIComponent(encoded)).then(() => {
-    const orig = btn.innerHTML;
-    btn.innerHTML = "✅ ¡Copiado!";
-    btn.classList.add("ok");
-    setTimeout(() => { btn.innerHTML = orig; btn.classList.remove("ok"); }, 2000);
+function cp(btn,encoded){
+  navigator.clipboard.writeText(decodeURIComponent(encoded)).then(()=>{
+    const o=btn.innerHTML;btn.innerHTML="✅ ¡Copiado!";btn.classList.add("ok");
+    setTimeout(()=>{btn.innerHTML=o;btn.classList.remove("ok");},2000);
   });
 }
 </script>
