@@ -115,8 +115,9 @@
 </div>
 
 <script>
-const OR_KEY = "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";
-const OR_MODEL = "llama3-70b-8192";
+const GROQ_KEY = "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";
+const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
+const GROQ_MODEL = "llama3-70b-8192";
 
 let type="reflexion", tone="Inspirador", count=2;
 const TL={reflexion:"Reflexión de Fe",programa:"Programa",historia:"Historia de Impacto",dato:"Dato de Impacto",comunidad:"Llamado a la Comunidad"};
@@ -128,28 +129,28 @@ function selCount(el){document.querySelectorAll("#counts .pill").forEach(p=>p.cl
 
 function buildPrompt(){
   const tp={
-    reflexion:`Crea ${count} posts de reflexión de fe para Instagram. Incluye versículos bíblicos reales que fluyan naturalmente en el texto. Conecta con la realidad venezolana y el trabajo de UNAGENDIF.`,
-    programa:`Crea ${count} posts sobre los programas: Escuela de Líderes del Mañana (liderazgo 8-16 años), Raíces y Alas (familias), Semillas de Nación (civismo 12-18 años). Describe qué viven los participantes y cómo cambia su vida.`,
-    historia:`Crea ${count} posts tipo testimonio de impacto. Usa nombres venezolanos ficticios creíbles (Carlos, Mariela, Pastor Reinaldo, etc). Escríbelos con emoción genuina.`,
-    dato:`Crea ${count} posts con datos reales de UNAGENDIF: presencia en 23 estados, 340+ voluntarios, 80+ congregaciones aliadas, 94% de recursos van directo a programas, 87% de egresados mejoran rendimiento escolar, 12 años de servicio.`,
-    comunidad:`Crea ${count} posts invitando a la comunidad a ser voluntario, donar, o aliarse como congregación con UNAGENDIF.`
+    reflexion:`Crea ${count} posts de reflexión de fe para Instagram. Incluye versículos bíblicos reales que fluyan naturalmente. Conecta con la realidad venezolana y el trabajo de UNAGENDIF.`,
+    programa:`Crea ${count} posts sobre los programas: Escuela de Líderes del Mañana (liderazgo 8-16 años), Raíces y Alas (familias), Semillas de Nación (civismo 12-18 años).`,
+    historia:`Crea ${count} posts tipo testimonio de impacto con nombres venezolanos ficticios creíbles. Escríbelos con emoción genuina.`,
+    dato:`Crea ${count} posts con datos de UNAGENDIF: 23 estados, 340+ voluntarios, 80+ congregaciones, 94% recursos a programas, 87% egresados mejoran rendimiento, 12 años de servicio.`,
+    comunidad:`Crea ${count} posts invitando a ser voluntario, donar o aliarse como congregación con UNAGENDIF.`
   };
-  const tn={Inspirador:"inspirador y que mueva a la acción",Esperanzador:"esperanzador y lleno de luz",Emotivo:"emotivo y cercano al corazón",Informativo:"informativo pero cálido",Urgente:"urgente y apasionado",Celebratorio:"celebratorio y lleno de gratitud a Dios"};
-  return `Eres el community manager de UNAGENDIF (Una Generación Diferente), fundación cristiana venezolana apoyada por la Hermandad Cristiana de Venezuela. Sede en La Castellana, Caracas. Presencia en los 23 estados de Venezuela. Instagram: @unagendif | Web: unagendif.site
+  const tn={Inspirador:"inspirador que mueva a la acción",Esperanzador:"esperanzador y lleno de luz",Emotivo:"emotivo y cercano al corazón",Informativo:"informativo pero cálido",Urgente:"urgente y apasionado",Celebratorio:"celebratorio y lleno de gratitud a Dios"};
+  return `Eres el community manager de UNAGENDIF (Una Generación Diferente), fundación cristiana venezolana. Sede en Caracas, presencia en 23 estados. Instagram: @unagendif
 
-REGLAS CRÍTICAS:
-- Escribe con voz humana, venezolana y llena de fe. NADA de frases corporativas.
-- Expresiones venezolanas naturales ocasionales: chamo/a, pana, dale pues, mira.
-- Versículos bíblicos en cursiva con cita exacta, fluyendo en el texto.
-- Entre 150 y 280 palabras por caption (sin contar hashtags).
+REGLAS:
+- Voz humana, venezolana, llena de fe. Sin frases corporativas.
+- Expresiones venezolanas naturales: chamo/a, pana, dale pues.
+- Versículos bíblicos en cursiva con cita exacta.
+- 150-280 palabras por caption (sin hashtags).
 - Máximo 12 hashtags por post.
-- Tono: ${tn[tone]||tone}.
-- NUNCA uses: "En el corazón de nuestra misión", "Estamos comprometidos a", "Como organización".
+- Tono: ${tn[tone]||tone}
+- NUNCA uses: "En el corazón de nuestra misión", "Estamos comprometidos", "Como organización"
 
 TAREA: ${tp[type]}
 
-Responde ÚNICAMENTE con JSON válido, sin markdown, sin texto adicional:
-{"posts":[{"caption":"texto del post con saltos de linea como \\n","hashtags":"#tag1 #tag2 #tag3"}]}`;
+Responde ÚNICAMENTE con JSON válido sin markdown ni texto adicional:
+{"posts":[{"caption":"texto con saltos de linea como \\n","hashtags":"#tag1 #tag2"}]}`;
 }
 
 async function generate(){
@@ -158,34 +159,41 @@ async function generate(){
   document.getElementById("output").innerHTML=`<div class="spinner-wrap"><div class="spinner"></div><p>Creando contenido para UNAGENDIF…</p></div>`;
 
   try{
-    const res = await fetch("https://openrouter.ai/api/v1/chat/completions",{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        "Authorization":`Bearer ${OR_KEY}`,
-        "HTTP-Referer":"https://contenido.unagendif.site",
-        "X-Title":"UNAGENDIF Instagram Generator"
+    const res = await fetch(GROQ_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + GROQ_KEY
       },
-      body:JSON.stringify({
-        model: OR_MODEL,
-        messages:[{role:"user", content: buildPrompt()}],
+      body: JSON.stringify({
+        model: GROQ_MODEL,
+        messages: [
+          {
+            role: "system",
+            content: "Eres un experto en redes sociales para organizaciones cristianas venezolanas. Respondes ÚNICAMENTE con JSON válido, sin markdown, sin explicaciones."
+          },
+          {
+            role: "user",
+            content: buildPrompt()
+          }
+        ],
         temperature: 0.9,
         max_tokens: 3000
       })
     });
 
     if(!res.ok){
-      const e=await res.json();
-      throw new Error(e.error?.message||`Error ${res.status}`);
+      const e = await res.json();
+      throw new Error(e.error?.message || "Error " + res.status);
     }
 
     const data = await res.json();
     let raw = data.choices?.[0]?.message?.content || "";
-    raw = raw.replace(/```json|```/g,"").trim();
+    raw = raw.replace(/```json|```/g, "").trim();
     const parsed = JSON.parse(raw);
     renderPosts(parsed.posts);
 
-  }catch(e){
+  } catch(e){
     document.getElementById("output").innerHTML=`<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Error</h3><p>${e.message}</p></div>`;
   }
 
@@ -193,13 +201,13 @@ async function generate(){
 }
 
 function renderPosts(posts){
-  document.getElementById("badge").textContent=`${posts.length} posts`;
-  document.getElementById("output").innerHTML=`<div class="posts-grid">${posts.map((p,i)=>{
-    const cap=p.caption.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>");
-    const hash=p.hashtags.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-    const ft=encodeURIComponent(p.caption+"\n\n"+p.hashtags);
-    const fc=encodeURIComponent(p.caption);
-    const fh=encodeURIComponent(p.hashtags);
+  document.getElementById("badge").textContent = posts.length + " posts";
+  document.getElementById("output").innerHTML = `<div class="posts-grid">${posts.map((p,i) => {
+    const cap = p.caption.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>");
+    const hash = p.hashtags.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    const ft = encodeURIComponent(p.caption + "\n\n" + p.hashtags);
+    const fc = encodeURIComponent(p.caption);
+    const fh = encodeURIComponent(p.hashtags);
     return `<div class="post-card" style="animation-delay:${i*.08}s">
       <div class="p-head"><div class="p-avatar">U</div><span class="p-handle">@unagendif</span><span class="p-tag ${TC[type]}">${TL[type]}</span></div>
       <div class="p-body"><div class="p-caption">${cap}</div><div class="p-hashtags">${hash}</div></div>
@@ -211,10 +219,12 @@ function renderPosts(posts){
   }).join("")}</div>`;
 }
 
-function cp(btn,encoded){
-  navigator.clipboard.writeText(decodeURIComponent(encoded)).then(()=>{
-    const o=btn.innerHTML; btn.innerHTML="✅ ¡Copiado!"; btn.classList.add("ok");
-    setTimeout(()=>{btn.innerHTML=o;btn.classList.remove("ok");},2000);
+function cp(btn, encoded){
+  navigator.clipboard.writeText(decodeURIComponent(encoded)).then(() => {
+    const o = btn.innerHTML;
+    btn.innerHTML = "✅ ¡Copiado!";
+    btn.classList.add("ok");
+    setTimeout(() => { btn.innerHTML = o; btn.classList.remove("ok"); }, 2000);
   });
 }
 </script>
